@@ -5,10 +5,12 @@ from aiogram import types
 from loader import dp
 from loader import vote_cb
 from keyboards import *
+from utils.db_api import quck_commands
 
 
 @dp.message_handler(text='/start')
 async def cmd_panel(message: types.Message):
+    await quck_commands.add_user(message.chat.id)
     await message.answer('Привет, это старовая панель VPN-бота', reply_markup=start)
 
 

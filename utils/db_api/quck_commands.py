@@ -1,12 +1,13 @@
+
 from asyncpg import UniqueViolationError
 
 from utils.db_api.db_gino import db
 from utils.db_api.schemas.user import User
 
 
-async def add_user(user_id: int):
+async def add_user(user_id: int, end_sub_date='None'):
     try:
-        user = User(user_id=user_id)
+        user = User(user_id=user_id, end_sub_date=end_sub_date)
         await user.create()
     except UniqueViolationError:
         print('Юзер не добавлен')
@@ -27,3 +28,11 @@ async def select_user(user_id):
     return user
 
 
+async def update_endsub_date(user_id, new_date: str):
+    user = await select_user(user_id)
+    await user.update(end_sub_date=new_date).apply()
+
+
+async def get_user_endsub_date(user_id):
+    users_endsub_date = await User.select('end_sub_date').where(User.user_id == user_id).gino.scalar()
+    return users_endsub_date
